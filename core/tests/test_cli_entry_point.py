@@ -63,8 +63,16 @@ class TestHelpExamples:
     """Test that all subcommands include usage examples in --help."""
 
     SUBCOMMANDS = [
-        "run", "info", "validate", "list", "dispatch", "shell",
-        "test-run", "test-debug", "test-list", "test-stats",
+        "run",
+        "info",
+        "validate",
+        "list",
+        "dispatch",
+        "shell",
+        "test-run",
+        "test-debug",
+        "test-list",
+        "test-stats",
     ]
 
     @pytest.mark.parametrize("subcommand", SUBCOMMANDS)
