@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from framework.cli import _configure_paths
+from framework.cli import _configure_paths, _get_version
 
 
 @pytest.fixture
@@ -57,6 +57,35 @@ class TestConfigurePaths:
     def test_handles_missing_exports_gracefully(self):
         """If exports/ doesn't exist, _configure_paths should not crash."""
         _configure_paths()
+
+
+class TestVersionFlag:
+    """Test --version / -V flag."""
+
+    def test_get_version_returns_string(self):
+        ver = _get_version()
+        assert isinstance(ver, str)
+        assert ver != "unknown"
+
+    def test_version_via_module(self, project_root):
+        result = subprocess.run(
+            [sys.executable, "-m", "framework", "--version"],
+            capture_output=True,
+            text=True,
+            cwd=str(project_root / "core"),
+        )
+        assert result.returncode == 0
+        assert "aden-hive" in result.stdout
+
+    def test_version_short_flag_via_module(self, project_root):
+        result = subprocess.run(
+            [sys.executable, "-m", "framework", "-V"],
+            capture_output=True,
+            text=True,
+            cwd=str(project_root / "core"),
+        )
+        assert result.returncode == 0
+        assert "aden-hive" in result.stdout
 
 
 class TestFrameworkModule:

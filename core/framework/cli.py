@@ -18,7 +18,23 @@ Testing commands:
 
 import argparse
 import sys
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
+
+
+def _get_version() -> str:
+    """Return the installed framework version, falling back to pyproject.toml."""
+    try:
+        return version("framework")
+    except PackageNotFoundError:
+        pass
+    # Fallback: read version from pyproject.toml directly
+    pyproject = Path(__file__).resolve().parent.parent / "pyproject.toml"
+    if pyproject.exists():
+        for line in pyproject.read_text().splitlines():
+            if line.strip().startswith("version"):
+                return line.split("=", 1)[1].strip().strip('"').strip("'")
+    return "unknown"
 
 
 def _configure_paths():
@@ -56,6 +72,12 @@ def main():
     parser = argparse.ArgumentParser(
         prog="hive",
         description="Aden Hive - Build and run goal-driven agents",
+    )
+    parser.add_argument(
+        "--version",
+        "-V",
+        action="version",
+        version=f"aden-hive {_get_version()}",
     )
     parser.add_argument(
         "--model",
